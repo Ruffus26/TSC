@@ -14,14 +14,6 @@ module top;
   
   tb_ifc lab2_if(clk);
 
-  // interconnecting signals
-  // logic          load_en;
-  // logic          reset_n;
-  // opcode_t       opcode;
-  // operand_t      operand_a, operand_b;
-  // address_t      write_pointer, read_pointer;
-  // instruction_t  instruction_word;
-
   // instantiate testbench and connect ports
   instr_register_test test (
     .lab2_if(lab2_if)

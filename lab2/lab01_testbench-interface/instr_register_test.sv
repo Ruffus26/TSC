@@ -14,8 +14,10 @@ module instr_register_test
   // timeunit 1ns/1ns;
 
   int seed = 555;
+  static int tmp_read = 0;
 
   initial begin
+    $display("FIRST HEADER");
     $display("\n\n***********************************************************");
     $display(    "***  THIS IS NOT A SELF-CHECKING TESTBENCH (YET).  YOU  ***");
     $display(    "***  NEED TO VISUALLY VERIFY THAT THE OUTPUT VALUES     ***");
@@ -27,28 +29,29 @@ module instr_register_test
     lab2_if.cb.read_pointer   <= 5'h1F;         // initialize read pointer
     lab2_if.cb.load_en        <= 1'b0;          // initialize load control line
     lab2_if.cb.reset_n        <= 1'b0;          // assert reset_n (active low)
-    repeat (2) @(lab2_if.cb) ;                 // hold in reset for 2 clock cycles
+    repeat (2) @(posedge lab2_if.cb) ;                 // hold in reset for 2 clock cycles
     lab2_if.cb.reset_n        <= 1'b1;          // deassert reset_n (active low)
 
     $display("\nWriting values to register stack...");
-    @(lab2_if.cb) lab2_if.cb.load_en <= 1'b1;  // enable writing to register
-    repeat (3) begin
-      @(lab2_if.cb) randomize_transaction;
-      @(negedge lab2_if.clk) print_transaction;
+    @(posedge lab2_if.cb) lab2_if.cb.load_en <= 1'b1;  // enable writing to register
+    repeat (10) begin
+      @(posedge lab2_if.cb) randomize_transaction;
+      @(negedge lab2_if.cb) print_transaction;
     end
-    @(lab2_if.cb) lab2_if.cb.load_en <= 1'b0;  // turn-off writing to register
+    @(posedge lab2_if.cb) lab2_if.cb.load_en <= 1'b0;  // turn-off writing to register
 
     // read back and display same three register locations
     $display("\nReading back the same register locations written...");
-    for (int i=0; i<=2; i++) begin
+    for (int i=9; i>=0; i--) begin
       // later labs will replace this loop with iterating through a
       // scoreboard to determine which addresses were written and
       // the expected values to be read back
-      @(lab2_if.cb) lab2_if.cb.read_pointer <= i;
-      @(negedge lab2_if.clk) print_results;
+      tmp_read = $unsigned($random)%10;
+      @(posedge lab2_if.cb) lab2_if.cb.read_pointer <= tmp_read;
+      @(negedge lab2_if.cb) print_results;
     end
 
-    @(lab2_if.cb) ;
+    @(posedge lab2_if.cb) ;
     $display("\n***********************************************************");
     $display(  "***  THIS IS NOT A SELF-CHECKING TESTBENCH (YET).  YOU  ***");
     $display(  "***  NEED TO VISUALLY VERIFY THAT THE OUTPUT VALUES     ***");
