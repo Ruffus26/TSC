@@ -3,12 +3,11 @@
  * contains the interface to connect the testbench to the design
  **********************************************************************/
 interface tb_ifc (input logic clk);
-  // timeunit 1ns/1ns;
 
   // user-defined types are defined in instr_register_pkg.sv
   import instr_register_pkg::*;
 
-  // ADD CODE TO DECLARE THE INTERFACE SIGNALS
+  // THE INTERFACE SIGNALS
   logic          load_en;
   logic          reset_n;
   opcode_t       opcode;
@@ -17,19 +16,19 @@ interface tb_ifc (input logic clk);
   instruction_t  instruction_word;
 
   clocking cb @(clk);
-    output load_en,
-           reset_n,
-           opcode,
-           operand_a,
-           operand_b,
-           write_pointer,
-           read_pointer;
+    output load_en       ,
+           reset_n       ,
+           opcode        ,
+           operand_a     ,
+           operand_b     ,
+           write_pointer ,
+           read_pointer  ;
     input instruction_word;
   endclocking
 
   modport TEST (
     clocking cb
-    );
+  );
 
 endinterface: tb_ifc
 

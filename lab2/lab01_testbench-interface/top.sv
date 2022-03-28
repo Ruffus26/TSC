@@ -3,7 +3,6 @@
  **********************************************************************/
 
 module top;
-  // timeunit 1ns/1ns;
 
   // user-defined types are defined in instr_register_pkg.sv
   import instr_register_pkg::*;
@@ -12,24 +11,24 @@ module top;
   logic clk;
   logic test_clk;
   
-  tb_ifc lab2_if(clk);
+  tb_ifc arithmetic_if(clk);
 
   // instantiate testbench and connect ports
   instr_register_test test (
-    .lab2_if(lab2_if)
+    .arithmetic_if(arithmetic_if)
    );
 
   // instantiate design and connect ports
   instr_register dut (
-    .clk(clk),
-    .load_en(lab2_if.load_en),
-    .reset_n(lab2_if.reset_n),
-    .operand_a(lab2_if.operand_a),
-    .operand_b(lab2_if.operand_b),
-    .opcode(lab2_if.opcode),
-    .write_pointer(lab2_if.write_pointer),
-    .read_pointer(lab2_if.read_pointer),
-    .instruction_word(lab2_if.instruction_word)
+    .clk     (clk),
+    .load_en          ( arithmetic_if.load_en          ),
+    .reset_n          ( arithmetic_if.reset_n          ),
+    .operand_a        ( arithmetic_if.operand_a        ),
+    .operand_b        ( arithmetic_if.operand_b        ),
+    .opcode           ( arithmetic_if.opcode           ),
+    .write_pointer    ( arithmetic_if.write_pointer    ),
+    .read_pointer     ( arithmetic_if.read_pointer     ),
+    .instruction_word ( arithmetic_if.instruction_word )
    );
 
   // clock oscillators
