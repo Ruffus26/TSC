@@ -22,3 +22,5 @@ transcript*
 sc_dpiheader.h
 vsim.dbg
 lab2/reports/regression_transcript/
+lab2/sim/
+lab2/work
