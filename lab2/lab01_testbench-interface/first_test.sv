@@ -1,6 +1,7 @@
 class first_test;
 
-  int seed = 555;
+  //int seed = 666;
+  parameter NR_OF_TRANS = 100;
 
   // Interface declaration
   virtual tb_ifc.TEST arithmetic_if;
@@ -27,7 +28,7 @@ class first_test;
 
     $display("\nWriting values to register stack...");
     @(posedge arithmetic_if.cb) arithmetic_if.cb.load_en <= 1'b1;  // enable writing to register
-    repeat (20) begin
+    repeat (NR_OF_TRANS) begin
       @(posedge arithmetic_if.cb) randomize_transaction;
       @(negedge arithmetic_if.cb) print_transaction;
     end
@@ -35,7 +36,7 @@ class first_test;
 
     // read back and display same three register locations
     $display("\nReading back the same register locations written...");
-    for (int i = 0; i <= 19; i++) begin
+    for (int i = 0; i < NR_OF_TRANS; i++) begin
       // later labs will replace this loop with iterating through a
       // scoreboard to determine which addresses were written and
       // the expected values to be read back
@@ -61,9 +62,9 @@ class first_test;
     // write_pointer values in a later lab
     //
     static int temp = 0;
-    arithmetic_if.cb.operand_a     <= $random(seed)%16;                 // between -15 and 15
-    arithmetic_if.cb.operand_b     <= $unsigned($random)%16;            // between 0 and 15
-    arithmetic_if.cb.opcode        <= opcode_t'($unsigned($random)%8);  // between 0 and 7, cast to opcode_t type
+    arithmetic_if.cb.operand_a     <= $urandom%16;                 // between -15 and 15
+    arithmetic_if.cb.operand_b     <= $unsigned($urandom)%16;            // between 0 and 15
+    arithmetic_if.cb.opcode        <= opcode_t'($unsigned($urandom)%8);  // between 0 and 7, cast to opcode_t type
     arithmetic_if.cb.write_pointer <= temp++;
   endfunction: randomize_transaction
 
