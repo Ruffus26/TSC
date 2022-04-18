@@ -8,10 +8,26 @@ class first_test;
   // Interface declaration
   virtual tb_ifc.TEST arithmetic_if;
 
+  covergroup func_cov;
+    operand_a : coverpoint arithmetic_if.cb.operand_a {
+      bins positive_numbers[] = {[1:15]};
+      bins negative_numbers[] = {[-15:-1]};
+      bins zero_value = {0};
+    }
+    operand_b : coverpoint arithmetic_if.cb.operand_b {
+      bins positive_numbers[] = {[1:15]};
+      bins zero_value = {0};
+    }
+    opcode : coverpoint arithmetic_if.cb.opcode {
+      option.auto_bin_max = 8;
+    }
+  endgroup
+
   // Constructor
   function new(virtual tb_ifc.TEST ifc);
     this.arithmetic_if = ifc;
     this.err_cnt = 0;
+    func_cov = new();
   endfunction
 
   task init_sim();
@@ -39,6 +55,7 @@ class first_test;
     repeat (NR_OF_TRANSACTIONS) begin
       @(posedge arithmetic_if.cb) randomize_transaction;
       @(negedge arithmetic_if.cb) print_transaction;
+      func_cov.sample();
     end
     @(posedge arithmetic_if.cb) arithmetic_if.cb.load_en <= 1'b0;  // turn-off writing to register
 
@@ -50,6 +67,7 @@ class first_test;
       // the expected values to be read back
       @(posedge arithmetic_if.cb) arithmetic_if.cb.read_pointer <= i;
       @(negedge arithmetic_if.cb) print_results;
+      func_cov.sample();
     end
 
     @(posedge arithmetic_if.cb) ;
@@ -78,7 +96,7 @@ class first_test;
     // write_pointer values in a later lab
     //
     static int temp = 0;
-    arithmetic_if.cb.operand_a     <= $urandom%16;                       // between -15 and 15
+    arithmetic_if.cb.operand_a     <= $signed($urandom)%16;                       // between -15 and 15
     arithmetic_if.cb.operand_b     <= $unsigned($urandom)%16;            // between 0 and 15
     arithmetic_if.cb.opcode        <= opcode_t'($unsigned($urandom)%8);  // between 0 and 7, cast to opcode_t type
     arithmetic_if.cb.write_pointer <= temp++;
